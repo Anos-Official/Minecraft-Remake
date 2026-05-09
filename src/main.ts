@@ -6,6 +6,8 @@ import { buildOverlayMesh } from './rendering/overlayMesh';
 import { registerShaders } from './rendering/shaders';
 import { VoxelMaterials, PLAINS_BIOME } from './rendering/materials';
 import { WORLD_CHUNKS_X, WORLD_CHUNKS_Z } from './world/blocks';
+import { worldData } from './world/worldData';
+import { Player } from './player/player';
 
 const canvas = document.getElementById('renderCanvas') as HTMLCanvasElement;
 const engine = new BABYLON.Engine(canvas, false);
@@ -31,7 +33,7 @@ const createScene = async (): Promise<BABYLON.Scene> => {
     PLAINS_BIOME
   );
 
-  // pass atlas regions as face uvs
+  // face uvs
   const faceUVs: FaceUVs = {
     grass_top:     atlas.regions['grass_top'],
     grass_side:    atlas.regions['grass_side'],
@@ -58,6 +60,9 @@ const createScene = async (): Promise<BABYLON.Scene> => {
       worker.onmessage = (e: MessageEvent) => {
         const { chunkX, chunkZ, blocks } = e.data;
         const blockData = new Uint8Array(blocks);
+
+        // store in world data for physics and collision
+        worldData.setChunk(chunkX, chunkZ, blockData);
 
         // base mesh
         const mesh = buildChunkMesh(
@@ -87,6 +92,14 @@ const createScene = async (): Promise<BABYLON.Scene> => {
       };
     }
   }
+
+  // create player after scene is set up
+const player = new Player(camera, canvas, scene);
+
+  // cleanup on scene dispose
+  scene.onDisposeObservable.add(() => {
+    player.destroy();
+  });
 
   return scene;
 };

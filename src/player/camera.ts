@@ -6,22 +6,34 @@ export const createCamera = (
 ): BABYLON.UniversalCamera => {
   const camera = new BABYLON.UniversalCamera(
     'camera',
-    new BABYLON.Vector3(32, 12, 32),
+    new BABYLON.Vector3(0, 0, 0),
     scene
   );
 
-  camera.setTarget(new BABYLON.Vector3(33, 11, 33));
-  camera.attachControl(canvas, true);
-  camera.keysUp    = [87]; // W
-  camera.keysDown  = [83]; // S
-  camera.keysLeft  = [65]; // A
-  camera.keysRight = [68]; // D
-  camera.speed = 0.3;
-  camera.angularSensibility = 800;
+  // disable all built in controls
+  camera.keysUp = [];
+  camera.keysDown = [];
+  camera.keysLeft = [];
+  camera.keysRight = [];
   camera.minZ = 0.1;
+
+  // handle mouse look manually
+  let yaw = 0;
+  let pitch = 0;
 
   canvas.addEventListener('click', () => {
     canvas.requestPointerLock();
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (document.pointerLockElement !== canvas) return;
+    const sensitivity = 0.002;
+    yaw += e.movementX * sensitivity;
+    pitch += e.movementY * sensitivity;
+    // clamp pitch so you cant flip upside down
+    pitch = Math.max(-Math.PI / 2 + 0.01, Math.min(Math.PI / 2 - 0.01, pitch));
+    camera.rotation.x = pitch;
+    camera.rotation.y = yaw;
   });
 
   return camera;

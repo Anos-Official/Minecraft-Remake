@@ -142,6 +142,7 @@ export const resolveCollision = (
   velocity: BABYLON.Vector3
 ): CollisionResult => {
   let aabb = getPlayerAABB(position);
+
   const blocks = getBlocksInAABB({
     minX: aabb.minX + Math.min(velocity.x, 0),
     minY: aabb.minY + Math.min(velocity.y, 0),
@@ -151,28 +152,21 @@ export const resolveCollision = (
     maxZ: aabb.maxZ + Math.max(velocity.z, 0),
   });
 
-  // resolve each axis separately
+  // resolve X
   let vx = resolveAxisX(aabb, blocks, velocity.x);
-  aabb = {
-    ...aabb,
-    minX: aabb.minX + vx,
-    maxX: aabb.maxX + vx,
-  };
+  aabb = { ...aabb, minX: aabb.minX + vx, maxX: aabb.maxX + vx };
 
+  // resolve Y
   let vy = resolveAxisY(aabb, blocks, velocity.y);
   const onGround = vy !== velocity.y && velocity.y < 0;
-  aabb = {
-    ...aabb,
-    minY: aabb.minY + vy,
-    maxY: aabb.maxY + vy,
-  };
+  aabb = { ...aabb, minY: aabb.minY + vy, maxY: aabb.maxY + vy };
 
+  // resolve Z
   let vz = resolveAxisZ(aabb, blocks, velocity.z);
 
-  // new eye position
   const newPosition = new BABYLON.Vector3(
     position.x + vx,
-    aabb.minY + PLAYER_EYE_HEIGHT + vy,
+    aabb.minY + PLAYER_EYE_HEIGHT,
     position.z + vz
   );
 
