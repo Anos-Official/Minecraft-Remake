@@ -62,7 +62,7 @@ const getBlock = (
   z: number
 ): Block => {
   if (x < 0 || x >= CHUNK_SIZE || z < 0 || z >= CHUNK_SIZE) {
-    return Block.STONE;
+    return Block.AIR; // was Block.STONE
   }
   if (y < 0 || y >= CHUNK_HEIGHT) {
     return Block.AIR;
@@ -150,6 +150,7 @@ export const buildChunkMesh = (
           const faceVerts = FACE_VERTICES[f];
           const normal = FACE_NORMALS[f];
           const region = getUVForFace(block, face, uvs);
+          
           const tint = (block === Block.GRASS && face === Face.TOP) ? 1.0 : 0.0;
 
           faceVerts.forEach(([vx, vy, vz]) => {

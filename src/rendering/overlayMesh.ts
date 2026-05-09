@@ -93,7 +93,7 @@ export const buildOverlayMesh = (
           const normal = FACE_NORMALS[f];
 
           // slight offset to prevent z-fighting with base mesh
-          const offset = 0.001;
+          const offset = 0.005;
           faceVerts.forEach(([vx, vy, vz]) => {
             const ox = normal[0] * offset;
             const oz = normal[2] * offset;
