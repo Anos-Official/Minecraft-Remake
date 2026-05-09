@@ -1,5 +1,5 @@
 {
-  "name": "minecraft-remake",
+  "name": "webcraft",
   "version": "1.0.0",
   "description": "A remake of minecraft using only html",
   "main": "index.js",
